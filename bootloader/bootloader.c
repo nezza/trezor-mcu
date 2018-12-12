@@ -109,6 +109,8 @@ void bootloader_loop(void)
 int main(void)
 {
 	// __stack_chk_guard = random32(); // this supports compiler provided unpredictable stack protection checks
+	memset((void*)0x20000000, 'F', 100);
+	// while(1);
 	memory_protect();
 	gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO11);
 	while(1) {
