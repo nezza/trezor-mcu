@@ -103,61 +103,20 @@ bool firmware_present(void)
 
 void bootloader_loop(void)
 {
-	oledClear();
-	oledDrawBitmap(0, 0, &bmp_logo64);
-	if (firmware_present()) {
-		oledDrawString(52, 0, "TREZOR", FONT_STANDARD);
-		static char serial[25];
-		fill_serialno_fixed(serial);
-		oledDrawString(52, 20, "Serial No.", FONT_STANDARD);
-		oledDrawString(52, 40, serial + 12, FONT_STANDARD); // second part of serial
-		serial[12] = 0;
-		oledDrawString(52, 30, serial, FONT_STANDARD);      // first part of serial
-		oledDrawStringRight(OLED_WIDTH - 1, OLED_HEIGHT - 8, "Loader " VERSTR(VERSION_MAJOR) "." VERSTR(VERSION_MINOR) "." VERSTR(VERSION_PATCH), FONT_STANDARD);
-	} else {
-		oledDrawString(52, 10, "Welcome!", FONT_STANDARD);
-		oledDrawString(52, 30, "Please visit", FONT_STANDARD);
-		oledDrawString(52, 50, "trezor.io/start", FONT_STANDARD);
-	}
-	oledRefresh();
-
 	usbLoop(firmware_present());
 }
 
 int main(void)
 {
-#ifndef APPVER
-	setup();
-#endif
 	__stack_chk_guard = random32(); // this supports compiler provided unpredictable stack protection checks
-#ifndef APPVER
 	memory_protect();
-	oledInit();
-#endif
-
-#ifndef APPVER
-	// at least one button is unpressed
-	uint16_t state = gpio_port_read(BTN_PORT);
-	int unpressed = ((state & BTN_PIN_YES) == BTN_PIN_YES || (state & BTN_PIN_NO) == BTN_PIN_NO);
-
-	if (firmware_present() && unpressed) {
-
-		oledClear();
-		oledDrawBitmap(40, 0, &bmp_logo64_empty);
-		oledRefresh();
-
-		uint8_t hash[32];
-		int signed_firmware = signatures_ok(hash);
-		if (SIG_OK != signed_firmware) {
-			show_unofficial_warning(hash);
-			timer_init();
-		}
-
-		load_app(signed_firmware);
+	gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPI11);
+	while(1) {
+	    gpio_toggle(GPIOA, GPI11);
+	    delay(1000);
 	}
-#endif
 
-	bootloader_loop();
+	// bootloader_loop();
 
 	return 0;
 }
