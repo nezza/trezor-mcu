@@ -110,9 +110,9 @@ int main(void)
 {
 	__stack_chk_guard = random32(); // this supports compiler provided unpredictable stack protection checks
 	memory_protect();
-	gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPI11);
+	gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO11);
 	while(1) {
-	    gpio_toggle(GPIOA, GPI11);
+	    gpio_toggle(GPIOA, GPIO11);
 	    delay(1000);
 	}
 
