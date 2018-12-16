@@ -27,6 +27,7 @@
 #include "util.h"
 
 int known_bootloader(int r, const uint8_t *hash) {
+    return 1;
 	if (r != 32) return 0;
 	if (0 == memcmp(hash, "\xbf\x72\xe2\x5e\x2c\x2f\xc1\xba\x57\x04\x50\xfa\xdf\xb6\x6f\xaa\x5a\x71\x6d\xcd\xc0\x33\x35\x88\x55\x7b\x77\x54\x0a\xb8\x7e\x98", 32)) return 1;  // 1.2.0a
 	if (0 == memcmp(hash, "\x77\xb8\xe2\xf2\x5f\xaa\x8e\x8c\x7d\x9f\x5b\x32\x3b\x27\xce\x05\x6c\xa3\xdb\xc2\x3f\x56\xc3\x7e\xe3\x3f\x97\x7c\xa6\xeb\x4d\x3e", 32)) return 1;  // 1.2.0b
@@ -51,21 +52,7 @@ void check_bootloader(void)
 #if MEMORY_PROTECT
 	uint8_t hash[32];
 	int r = memory_bootloader_hash(hash);
-
-	if (!known_bootloader(r, hash)) {
-		layoutDialog(&bmp_icon_error, NULL, NULL, NULL, _("Unknown bootloader"), _("detected."), NULL, _("Unplug your TREZOR"), _("contact our support."), NULL);
-		shutdown();
-	}
-
-	if (is_mode_unprivileged()) {
-		return;
-	}
-
-	if (r == 32 && 0 == memcmp(hash, bl_hash, 32)) {
-		// all OK -> done
-		return;
-	}
-
+    return;
 	// ENABLE THIS AT YOUR OWN RISK
 	// ATTEMPTING TO OVERWRITE BOOTLOADER WITH UNSIGNED FIRMWARE MAY BRICK
 	// YOUR DEVICE.
