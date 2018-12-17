@@ -577,7 +577,7 @@ static void rx_callback(usbd_device *dev, uint8_t ep)
 		bool hash_check_ok = brand_new_firmware || button.YesUp;
 
 		layoutProgress("INSTALLING ... Please wait", 1000);
-		uint8_t flags = *FLASH_PTR(FLASH_META_FLAGS);
+		// uint8_t flags = *FLASH_PTR(FLASH_META_FLAGS);
 		// wipe storage if:
 		// 0) there was no firmware
 		// 1) old firmware was unsigned
