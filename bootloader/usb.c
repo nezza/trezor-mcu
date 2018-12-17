@@ -425,13 +425,11 @@ static void rx_callback(usbd_device *dev, uint8_t ep)
 			}
 			if (brand_new_firmware || button.YesUp) {
 				// check whether current firmware is signed
-				if (!brand_new_firmware && SIG_OK == signatures_ok(NULL)) {
-					old_was_unsigned = false;
-					// backup metadata
-					backup_metadata(meta_backup);
-				} else {
-					old_was_unsigned = true;
-				}
+				old_was_unsigned = false;
+
+				// backup metadata
+				backup_metadata(meta_backup);
+
 				flash_wait_for_last_operation();
 				flash_clear_status_flags();
 				flash_unlock();
@@ -585,9 +583,9 @@ static void rx_callback(usbd_device *dev, uint8_t ep)
 		// 1) old firmware was unsigned
 		// 2) firmware restore flag isn't set
 		// 3) signatures are not ok
-		if (brand_new_firmware || old_was_unsigned || (flags & 0x01) == 0 || SIG_OK != signatures_ok(NULL)) {
-			memzero(meta_backup, sizeof(meta_backup));
-		}
+
+		// NO WE AIN'T WIPING NO STORAGE
+
 		// copy new firmware header
 		memcpy(meta_backup, (void *)FLASH_META_START, FLASH_META_DESC_LEN);
 		// write "TRZR" in header only when hash was confirmed
